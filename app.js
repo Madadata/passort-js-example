@@ -6,6 +6,7 @@ const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const flash = require('connect-flash')
 const auth = require('./auth')
+const connectRedis = require('connect-redis')
 
 const app = express()
 
@@ -20,10 +21,14 @@ app.use(bodyParser.json())
 
 // Note that this is in-memory session, to use a persistent one
 // see [connect-redis](https://github.com/tj/connect-redis)
+
+const RedisStore = connectRedis(session)
+
 app.use(session({
   resave: false,
   saveUninitialized: true,
-  secret: 'keyboard cat'
+  secret: 'keyboard cat',
+  store: new RedisStore({})
 }))
 
 // See [#configure](http://passportjs.org/docs/configure) section
